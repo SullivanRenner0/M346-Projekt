@@ -52,9 +52,8 @@ aws s3 mb s3://$bucket2 > /dev/null
 echo "Bucket \"$bucket2\" wurde erstellt"
 
 #Funktion löschen
-# set -x
-aws lambda delete-function --function-name $functionName
-# exit 0
+aws lambda delete-function --function-name $functionName > /dev/null
+
 #Funktion erstellen
 cp $py $pyTemp > /dev/null
 sed -i -e 's/sourcebucket_replace/'$bucket1'/g' $pyTemp
@@ -148,8 +147,8 @@ else
     aws s3 rm "s3://$bucket1/$testBildName" > /dev/null
     aws s3 rm "s3://$bucket2/$compressesPrefix$testBildName" > /dev/null
 
-    echo ""
     echo "Das verkleinerte Bild ist gespeicher unter: $testBildDir/$compressesPrefix$testBildName"
+    echo ""
     echo "Erfolg :)"
     else
     { set +x; } 2>/dev/null
