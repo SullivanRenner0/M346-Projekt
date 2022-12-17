@@ -1,9 +1,5 @@
 #!/bin/bash
 
-# Wichtig!
-# Lambda Funktion copyImage wird überschrieben
-# Wichtig!
-
 #nötiges installieren 
 echo " "
 echo "Packages werden vorbereitet ..."
@@ -37,11 +33,12 @@ bucket1=$bucket1o
 bucket2=$bucket2o
 functionName=$functionNameo
 export i=0
-while `aws s3api head-bucket --bucket $bucket1 2>/dev/null || aws s3api head-bucket --bucket $bucket2 2>/dev/null` #|| aws lambda get-function --function-name $functionName 2>/dev/null`
+while `aws s3api head-bucket --bucket $bucket1 2>/dev/null || aws s3api head-bucket --bucket $bucket2 2>/dev/null || aws lambda get-function --function-name $functionName 2>/dev/null` #|| aws lambda get-function --function-name $functionName 2>/dev/null`
 do
 i=$((i+1))
 bucket1="$bucket1o-$i"
 bucket2="$bucket2o-$i"
+functionName="$functionNameo-$i"
 done
 
 #Buckets erstellen
@@ -52,7 +49,7 @@ aws s3 mb s3://$bucket2 > /dev/null
 echo "Bucket \"$bucket2\" wurde erstellt"
 
 #Funktion löschen
-aws lambda delete-function --function-name $functionName > /dev/null
+aws lambda delete-function --function-name $functionName &> /dev/null
 
 #Funktion erstellen
 cp $py $pyTemp > /dev/null
