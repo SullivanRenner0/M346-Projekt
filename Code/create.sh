@@ -1,5 +1,9 @@
 #!/bin/bash
 
+# Wichtig!
+# Lambda Funktion copyImage wird überschrieben
+# Wichtig!
+
 #nötiges installieren 
 echo " "
 echo "Packages werden vorbereitet ..."
@@ -28,17 +32,16 @@ export testBildName=''
 export testBildDir=''
 export filesInTestBildDir=''
 
-#Einzigartige Namen für die Buckets und die Funktion finden
+#Einzigartige Namen für die Buckets finden
 bucket1=$bucket1o
 bucket2=$bucket2o
 functionName=$functionNameo
 export i=0
-while `aws s3api head-bucket --bucket $bucket1 2>/dev/null || aws s3api head-bucket --bucket $bucket2 2>/dev/null || aws lambda get-function --function-name $functionName 2>/dev/null`
+while `aws s3api head-bucket --bucket $bucket1 2>/dev/null || aws s3api head-bucket --bucket $bucket2 2>/dev/null` #|| aws lambda get-function --function-name $functionName 2>/dev/null`
 do
 i=$((i+1))
 bucket1="$bucket1o-$i"
 bucket2="$bucket2o-$i"
-functionName=$functionNameo"_"$i
 done
 
 #Buckets erstellen
@@ -48,6 +51,10 @@ echo "Bucket \"$bucket1\" wurde erstellt"
 aws s3 mb s3://$bucket2 > /dev/null
 echo "Bucket \"$bucket2\" wurde erstellt"
 
+#Funktion löschen
+# set -x
+aws lambda delete-function --function-name $functionName
+# exit 0
 #Funktion erstellen
 cp $py $pyTemp > /dev/null
 sed -i -e 's/sourcebucket_replace/'$bucket1'/g' $pyTemp
@@ -131,7 +138,7 @@ else
     set -x
     aws s3 cp "$testBildPfad" "s3://$bucket1"
     { set +x; } 2>/dev/null
-    sleep 5 # Der Copy-Funktion zeit geben da sie ein paar Sekunden braucht
+    sleep 10 # Der Copy-Funktion zeit geben da sie ein paar Sekunden braucht
     set -x
     if `aws s3 cp "s3://$bucket2/$compressesPrefix$testBildName" "$testBildDir/$compressesPrefix$testBildName" >/dev/null`
     then
