@@ -4,31 +4,29 @@ from PIL import Image
 import pathlib
 from io import BytesIO
 
-s3 = boto3.resource('s3')
+s3 = boto3.client('s3')
 
-def resize_image(obj, des_bucket):
+
+def lambda_handler_replace(event, context):
+    print("Start")
+    client = boto3.client('s3')
+    obj = client.get_object(Bucket='sourcebucket_replace', Key=event['Records'][0]['s3']['object']['key'])
+    print("Got Object")
+
     size = 300, 300
     in_mem_file = BytesIO()
-    client = boto3.client('s3')
-
-    file_byte_string = obj.get()['Body'].read()
+    file_byte_string = obj['Body'].read()
     im = Image.open(BytesIO(file_byte_string))
-
     im.thumbnail(size, Image.ANTIALIAS)
     # ISSUE : https://stackoverflow.com/questions/4228530/pil-thumbnail-is-rotating-my-image
     im.save(in_mem_file, format=im.format)
     in_mem_file.seek(0)
 
-    response = client.put_object(
-        Body=in_mem_file,
-        Bucket=des_bucket,
-        Key='resizedPrefix_replace' + obj.key
-    )
+    print("resized id")
 
-def lambda_handler(event, context):
-    bucket = s3.Bucket('sourcebucket_replace')
-    # print("WantedKey: " + str(event['Records'][0]['s3']['object']['key']))
-    for obj in bucket.objects.all():
-        # print("ObjKey: " + str(obj.key))
-        if (obj.key == event['Records'][0]['s3']['object']['key']):
-            resize_image(obj, 'destbucket_replace')
+    response = s3.put_object(
+        Body=in_mem_file,
+        Bucket='destbucket_replace',
+        Key='resizedPrefix_replace' + event['Records'][0]['s3']['object']['key']
+    )
+    print ("saved it")
