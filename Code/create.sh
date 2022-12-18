@@ -23,25 +23,48 @@ pyTempName="CopyImage"
 pyTemp="$pyTempName.py"
 region="us-east-1"
 
-#Einzigartige Namen für die Buckets finden
-bucket1=$bucket1original
-bucket2=$bucket2original
+#Einzigartige Namen für die Buckets finden und erstellen
+echo ""
+echo "Einzigartige Namen für Buckets und Lambda-Funktion werden gesucht ..."
 functionName=$functionNameoriginal
-i=0
-
-while `aws s3api head-bucket --bucket $bucket1 2>/dev/null || aws s3api head-bucket --bucket $bucket2 2>/dev/null || aws lambda get-function --function-name $functionName 2>/dev/null`
+i=-1
+while [ 1 ]
 do
-i=$((i+1))
-bucket1="$bucket1original-$i"
-bucket2="$bucket2original-$i"
-functionName="$functionNameoriginal-$i"
+    i=$((i+1))
+    if [ "$i" -eq "0" ] 
+    then
+        bucket1="$bucket1original"
+        bucket2="$bucket2original"
+        functionName="$functionNameoriginal"
+    else
+        bucket1="$bucket1original-$i"
+        bucket2="$bucket2original-$i"
+        functionName="$functionNameoriginal-$i"
+    fi
+    bucket1Res=$(aws s3 mb s3://$bucket1 2>&1 >/dev/null)
+    if [ -n "$bucket1Res" ]
+    then
+        continue
+    fi
+
+    bucket2Res=$(aws s3 mb s3://$bucket2 2>&1 >/dev/null)
+    if [ -n "$bucket2Res" ]
+    then
+        aws s3 rb s3://$bucket1 --force &>/dev/null
+        continue
+    fi
+
+    funcRes=$(aws lambda get-function --function-name $functionName 2>/dev/null)
+    if [ -z "$funcRes" ]
+    then
+      break  
+    else
+        aws s3 rb s3://$bucket1 --force &>/dev/null
+        aws s3 rb s3://$bucket2 --force &>/dev/null
+    fi
 done
 
-#Buckets erstellen
-echo ""
-aws s3 mb s3://$bucket1 > /dev/null
 echo "Bucket \"$bucket1\" wurde erstellt"
-aws s3 mb s3://$bucket2 > /dev/null
 echo "Bucket \"$bucket2\" wurde erstellt"
 
 #Layer erstellen
@@ -51,10 +74,9 @@ layer=$(aws lambda publish-layer-version \
     --compatible-runtimes python3.9 \
     --region "$region" \
     | jq -r '.LayerVersionArn')
-echo "Layer \"$layerName\" wurde erstellt"
 
-#Funktion löschen
-aws lambda delete-function --function-name $functionName &> /dev/null
+echo ""
+echo "Layer \"$layerName\" wurde erstellt"
 
 #Funktion erstellen
 cp $py $pyTemp > /dev/null
@@ -89,24 +111,6 @@ aws lambda add-permission \
     > /dev/null
 echo "Lambda Funktion \"$functionName\" wurde erstellt"
 
-# #Policy des Buckets erstellen
-# policy='{
-#     "Version": "2012-10-17",
-#     "Id": "ProjectBucketPolicy1",
-#     "Statement": [
-#         {
-#             "Sid": "st1",
-#             "Effect": "Allow",
-#             "Principal": {
-#                 "AWS": "*"
-#             },
-#             "Action": "s3:*",
-#             "Resource": "arn:aws:s3:::'$bucket1'"
-#         }
-#     ]
-# }'
-# aws s3api put-bucket-policy --bucket "$bucket1" --policy "$policy" > /dev/null
-
 # Dem Bucket einen Trigger(alle Create Events) hinzufügen und auf die Funktion verweisen 
 eventJson='{
     "LambdaFunctionConfigurations": 
@@ -139,13 +143,15 @@ eventJson='{
 #Manchmal hat es beim ersten mal nicht funktioniert aber beim zweiten mal schon
 if `aws s3api put-bucket-notification-configuration --bucket "$bucket1" --notification-configuration "$eventJson" > /dev/null`
 then
-:
+    echo "Notification erstellt"
+    :
 else
-echo "Nochmalsversuchen Policy hinzuzufügen"
-    aws s3api put-bucket-notification-configuration --bucket "$bucket1" --notification-configuration "$eventJson" > /dev/null
+    echo "Nochmals versuchen Notification hinzuzufügen"
+    if `aws s3api put-bucket-notification-configuration --bucket "$bucket1" --notification-configuration "$eventJson" > /dev/null`
+    then
+        echo "Notification erstellt"
+    fi
 fi
-
-echo "Notification erstellt"
 
 #Ausgabe und Beispiel
 echo ""
@@ -172,28 +178,29 @@ else
     set -x
     if `aws s3 cp "s3://$bucket2/$compressesPrefix$testBildName" "$testBildDir/$compressesPrefix$testBildName" >/dev/null`
     then
-    { set +x; } 2>/dev/null
+        { set +x; } 2>/dev/null
 
-    #Bild wieder von Buckets entfernen
-    aws s3 rm "s3://$bucket1/$testBildName" > /dev/null
-    aws s3 rm "s3://$bucket2/$compressesPrefix$testBildName" > /dev/null
+        #Bild wieder von Buckets entfernen
+        aws s3 rm "s3://$bucket1/$testBildName" > /dev/null
+        aws s3 rm "s3://$bucket2/$compressesPrefix$testBildName" > /dev/null
 
-    echo "Das verkleinerte Bild ist gespeicher unter: $testBildDir/$compressesPrefix$testBildName"
-    echo ""
-    echo "Erfolg :)"
+        echo ""
+        echo "Das verkleinerte Bild ist gespeicher unter: $testBildDir/$compressesPrefix$testBildName"
+        echo ""
+        echo "Erfolg :)"
     else
-    { set +x; } 2>/dev/null
-    
-    #Bild wieder von Buckets entfernen
-    aws s3 rm "s3://$bucket1/$testBildName" > /dev/null
-    aws s3 rm "s3://$bucket2/$compressesPrefix$testBildName" > /dev/null
+        { set +x; } 2>/dev/null
+        
+        #Bild wieder von Buckets entfernen
+        aws s3 rm "s3://$bucket1/$testBildName" > /dev/null
+        aws s3 rm "s3://$bucket2/$compressesPrefix$testBildName" > /dev/null
 
-    echo ""
-    echo "Es ist ein Fehler aufgetreten :("
+        echo "$functionName"
+        echo "Es ist ein Fehler aufgetreten :("
 
-    # Wieder aufräumen
-    aws lambda delete-function --function-name $functionName > /dev/null
-    aws s3 rb s3://$bucket1 --force >/dev/null
-    aws s3 rb s3://$bucket2 --force >/dev/null
+        # Wieder aufräumen
+        aws lambda delete-function --function-name $functionName > /dev/null
+        aws s3 rb s3://$bucket1 --force >/dev/null
+        aws s3 rb s3://$bucket2 --force >/dev/null
     fi
 fi

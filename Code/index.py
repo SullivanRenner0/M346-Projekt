@@ -22,7 +22,7 @@ def lambda_handler_replace(event, context):
     im.save(in_mem_file, format=im.format)
     in_mem_file.seek(0)
 
-    print("resized id")
+    print("resized it")
 
     response = s3.put_object(
         Body=in_mem_file,
