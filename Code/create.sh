@@ -6,7 +6,6 @@ echo "Packages werden vorbereitet ..."
 sudo apt-get -qq update > /dev/null
 sudo apt-get install -qq zip > /dev/null
 sudo apt-get install -qq jq > /dev/null
-
 echo "Packages wurden fertig vorbereitet"
 
 #Variabeln deklarieren
@@ -18,12 +17,14 @@ zipName="lambda.zip"
 compressesPrefix="resized_"
 py="index.py"
 pil="pillow.zip"
+runtime="python3.9"
 pcFuncName="CopyImage"
 pyTempName="CopyImage"
 pyTemp="$pyTempName.py"
 region="us-east-1"
+testBildDir="../Testbild"
 
-#Einzigartige Namen für die Buckets finden und erstellen
+#Einzigartige Namen für die Buckets finden
 echo ""
 echo "Einzigartige Namen für Buckets und Lambda-Funktion werden gesucht ..."
 functionName=$functionNameoriginal
@@ -41,37 +42,44 @@ do
         bucket2="$bucket2original-$i"
         functionName="$functionNameoriginal-$i"
     fi
-    bucket1Res=$(aws s3 mb s3://$bucket1 2>&1 >/dev/null)
-    if [ -n "$bucket1Res" ]
+
+    funcRes=$(aws lambda get-function --function-name $functionName 2>&1> /dev/null)
+    if [ -z "$funcRes" ] #kein fehler -> Funktion existiert noch nicht
     then
         continue
     fi
 
-    bucket2Res=$(aws s3 mb s3://$bucket2 2>&1 >/dev/null)
-    if [ -n "$bucket2Res" ]
+    bucket1Res=$(aws s3api head-bucket --bucket $bucket1 2>&1> /dev/null)
+    bucket2Res=$(aws s3api head-bucket --bucket $bucket2 2>&1> /dev/null)
+    if [ -n "$bucket1Res" ] && [ -n "$bucket2Res" ]
     then
-        aws s3 rb s3://$bucket1 --force &>/dev/null
-        continue
-    fi
+        errorCode1=${bucket1Res#*(}
+        errorCode1=${errorCode1%)*}
 
-    funcRes=$(aws lambda get-function --function-name $functionName 2>/dev/null)
-    if [ -z "$funcRes" ]
-    then
-      break  
-    else
-        aws s3 rb s3://$bucket1 --force &>/dev/null
-        aws s3 rb s3://$bucket2 --force &>/dev/null
+        errorCode2=${bucket2Res#*(}
+        errorCode2=${errorCode2%)*}
+
+        if [ "$errorCode1" -eq "404" ] && [ "$errorCode2" -eq "404" ] #nur wenn Bucket nicht gefunden (404) / es könnte auch 403 sein (Bucket gehört jemand anderem)
+        then
+            break
+        fi
     fi
 done
+echo "Gefunden"
+echo ""
 
+#Buckets erstellen
+aws s3 mb s3://$bucket1 2>&1 >/dev/null
 echo "Bucket \"$bucket1\" wurde erstellt"
+
+aws s3 mb s3://$bucket2 2>&1 >/dev/null
 echo "Bucket \"$bucket2\" wurde erstellt"
 
 #Layer erstellen
 layer=$(aws lambda publish-layer-version \
     --layer-name $layerName \
     --zip-file fileb://$pil \
-    --compatible-runtimes python3.9 \
+    --compatible-runtimes $runtime \
     --region "$region" \
     | jq -r '.LayerVersionArn')
 
@@ -140,17 +148,21 @@ eventJson='{
     ]
 }'
 
-#Manchmal hat es beim ersten mal nicht funktioniert aber beim zweiten mal schon
-if `aws s3api put-bucket-notification-configuration --bucket "$bucket1" --notification-configuration "$eventJson" > /dev/null`
+#Manchmal hat es zuerst nicht funktioniert unf dann plötzlich doch
+notificationErstellt=0
+for i in {1..5}
+do
+    if `aws s3api put-bucket-notification-configuration --bucket "$bucket1" --notification-configuration "$eventJson" &> /dev/null`
+    then
+        notificationErstellt=1
+        break
+    fi
+done
+if [ "$notificationErstellt" -eq "1" ]
 then
     echo "Notification erstellt"
-    :
 else
-    echo "Nochmals versuchen Notification hinzuzufügen"
-    if `aws s3api put-bucket-notification-configuration --bucket "$bucket1" --notification-configuration "$eventJson" > /dev/null`
-    then
-        echo "Notification erstellt"
-    fi
+    echo "Beim erstellen der Notification ist ein Fehler aufegtreten"
 fi
 
 #Ausgabe und Beispiel
@@ -159,8 +171,10 @@ echo "Alles fertig eingerichtet"
 echo "Bucket orginal: "$bucket1
 echo "Bucket verkleinert: "$bucket2
 echo ""
-filesInTestBildDir=(../Testbild/*)
-testBildPfad="${filesInTestBildDir[-1]}"
+
+sleep 3
+
+testBildPfad=("$testBildDir"/*)
 if [ -z "$testBildPfad" ]
 then
     echo "Im \"Testbild-Ordner ist keine Datei\""
@@ -190,10 +204,6 @@ else
         echo "Erfolg :)"
     else
         { set +x; } 2>/dev/null
-        
-        #Bild wieder von Buckets entfernen
-        aws s3 rm "s3://$bucket1/$testBildName" > /dev/null
-        aws s3 rm "s3://$bucket2/$compressesPrefix$testBildName" > /dev/null
 
         echo "$functionName"
         echo "Es ist ein Fehler aufgetreten :("
