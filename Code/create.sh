@@ -1,7 +1,17 @@
 #!/bin/bash
+echo " "
+
+#Prüfen ob Verbindung zu AWS besteht
+identity=$(aws sts get-caller-identity 2>&1> /dev/null)
+if [ -n "$identity" ] # Fehler aufgetreten
+then
+    echo "Beim Versuch eine Verbindung zu AWS herzustellen ist ein Fehler aufgetreten ..."
+    echo  "Bitte die credentials Datei im .aws Ordner aktualisieren und dann nochmals versuchen"
+    echo ""
+    exit -1
+fi
 
 #nötiges installieren 
-echo " "
 echo "Packages werden vorbereitet ..."
 sudo apt-get -qq update > /dev/null
 sudo apt-get install -qq zip > /dev/null
@@ -44,7 +54,7 @@ do
     fi
 
     funcRes=$(aws lambda get-function --function-name $functionName 2>&1> /dev/null)
-    if [ -z "$funcRes" ] #kein fehler -> Funktion existiert noch nicht
+    if [ -z "$funcRes" ] #kein fehler -> Funktion existiert bereits
     then
         continue
     fi
@@ -150,7 +160,7 @@ eventJson='{
 
 #Manchmal hat es zuerst nicht funktioniert unf dann plötzlich doch
 notificationErstellt=0
-for i in {1..5}
+for i in {1..10} #Da es nicht lange dauert mal 10 Versuche
 do
     if `aws s3api put-bucket-notification-configuration --bucket "$bucket1" --notification-configuration "$eventJson" &> /dev/null`
     then
