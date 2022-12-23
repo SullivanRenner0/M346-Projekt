@@ -13,4 +13,15 @@ Beim einem nächsten Projekt würde ich fast alles gleich machen.<br>
 Was ich aber anders machen würde wäre die Dokumentation:<br>Diese würde ich immer vorzu aktualisieren, anstatt alles am Schluss zu schreiben.
 
 ## <ins>Lenny:</ins>
-Text Lenny
+Das Projekt im Modul 346 haben wir zu Beginn falsch angefangen. Wir haben
+versucht, die Buckets zusammen mit den Funktionen bloss einmal public zu erstellen.<br>
+
+Leider haben wir unseren Fehler bis zum Ende der ersten Lektion nicht bemerkt.
+In der nächsten Woche war ich krank. Das war die selbe Woche, in der Sullivan dann
+mithilfe eines Mitschülers herausgefunden hat, dass die Funktionen und Buckets
+mitteils Shell-Skript gemacht werden müssen. Mit dieser Information konnte er dann
+den Grossteil des Projekts auch schon beenden.<br>
+
+Die Aufgabenstellung kommt mir ein
+Wenig kompliziert vor. Ich denke, wenn das ganze etwas einfacher ausgedrückt wäre,
+könnte man den Auftrag ebenfalls einfacher verstehen.
