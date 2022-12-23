@@ -24,12 +24,10 @@ Die Name aller AWS Komponenten können im [create.sh](./Code/create.sh) angepass
 Der favorisierte Name des Buckets, in dem die Bilder in der orginalen Grösse hochgeladen werden sollen.
 
 ### <ins>bucket2original</ins>
-Der favorisierte Name des Buckets, in dem die Bilder in er overkleinert gespeichert werden sollen.
+Der favorisierte Name des Buckets, in dem die Bilder in er verkleinert gespeichert werden sollen.
 
 ### <ins>functionNameoriginal</ins>
-Der favorisierte Name der Lambda Funktion
-
-<br>
+Der favorisierte Name der Lambda Funktion.
 
 ### **Beispiel**
 bucket1original = "Bucket-original"<br>
@@ -41,7 +39,7 @@ Bucket-original = "Bucket-original-2"<br>
 Bucket-verkleinert = "Bucket-resized-2"<br>
 Bucket1 = "copyImage-2"
 
-<br>
+ 
 
 ## Grösse der verkleinerten Bilder ändern
 In der Datei [index.py](./Code/index.py) hat es eine Variable names size.<br>
@@ -51,18 +49,17 @@ Mit dieser kann die Grösse der verkleinerten Bilder angepasst werden.
 <ins>**Wichtig:**</ins><br>
 Das Seitenverhältniss des Orginalen Bildes bleibt bestehen.
 
-
-<br>
+ 
 
 ## Testbild
 Im Ordner [Testbild](./Testbild/) befindet sich die Datei [Testbild.png](./Testbild/Testbild.png).<br>
-Diese wird am Ende jedes Erstellens als Test hoch und wieder heruntergeladen
-Diese kann frei geändert und/oder umbenannt werden
+Diese wird am Ende jedes Erstellens als Test hoch und wieder heruntergeladen.
+Diese kann frei geändert und/oder umbenannt werden.
 
-<br>
+ 
 
 ## Tests
-Alle Tests finde Sie hier: [Tests](./tests.md)
+Alle Tests finde Sie [hier](./tests.md)
 
 ## **Wichtig**
 Zu Beginn werden sie eventuell nach dem Passwort gefragt. Das liegt daran dass der Code die Packages zip und jq benötigt.

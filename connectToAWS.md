@@ -6,12 +6,13 @@
        aws configure
 
     ![aws configure](./AWS%20Bilder/AWS-Configure.png)
-    <ins>Zu eigenen Werten ändern</ins><br>
+    <ins>Zu eigenen Werten ändern:</ins><br>
     - AWS Access Key ID
     - AWS Secret Access Key
     - Default region name
 <br>
 <br>
+
 2. Session-Token hinzufügen<br>
 
     2.1. In den .aws Ordner wechseln (Pfad muss eventuell angepasst werden)<br>
