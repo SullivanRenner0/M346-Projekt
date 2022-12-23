@@ -24,18 +24,18 @@ In diesem Fall empfehle ich das Skript abzubrechen und die Namen der Buckets und
 Mehr dazu [hier](./readme.md) unter "Namen anpassen"
 <br>
 
--<ins>Session wurde beendet/Session-Token ist nicht mehr aktuell</ins><br>
+- <ins>Session wurde beendet/Session-Token ist nicht mehr aktuell</ins><br>
 Wenn es 3min+ dauert köntte es daran liegen.<br>
 Mehr dazu [hier](./connectToAWS.md) unter "Session-Token hinzufügen"
 <br>
 
--<ins>Schlechte Internetverbindung</ins><br>
+- <ins>Schlechte Internetverbindung</ins><br>
 Manchmal liegt es auch ganz Simpel an einer schlechten Internetverbindung.<br>
-In diesem Fall nach Möglichkeit mit einem besseren besseren Netzt verbinden und nochmals versuchen
+In diesem Fall nach Möglichkeit mit einem besseren besseren Netzt verbinden und nochmals versuchen.
 <br>
 
--<ins>Keines der oben genannten trifft zu</ins><br>
-In diesem Fall hat bei mir nur ein Neustart des Computer geholfen. Dannach breucht es wieder nur 50 Sekunden.
+- <ins>Keines der oben genannten trifft zu</ins><br>
+In diesem Fall hat bei mir nur ein Neustart des Computer geholfen. Dannach brauchte es wieder nur 50 Sekunden.
 
 
 
