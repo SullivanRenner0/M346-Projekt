@@ -3,12 +3,12 @@
 ## Fehler
 ### <ins>Keine Internetverbindung</ins>
 Wenn keine Internetverbindung hergestellt werden kann wird dies so ausgegeben
-   ![](./AWS%20Bilder/No-Internet-Connection.png)
+   ![](../AWS%20Bilder/No-Internet-Connection.png)
 
 ### <ins>Keine verbindung zu AWS</ins>
 Dies passiert wenn es ein Fehler im credentials hat und/oder der Session-Token nicht mehr aktuell ist.<br>
 [Credentials aktualisieren](./connectToAWS.md)
-![](./AWS%20Bilder/No-Connection-To-AWS.png)
+![](../AWS%20Bilder/No-Connection-To-AWS.png)
 
 ### <ins>Das Skript läuft nicht mehr weiter</ins>
 Normalerweise braucht das Skript ca. 50-60 Sekunden.<br>
@@ -41,6 +41,6 @@ In diesem Fall hat bei mir nur ein Neustart des Computer geholfen. Dannach brauc
 
 ## <ins>Erfolg</ins>
 Wenn das Skript erfolgreich druchläuft wird am Ende das Beispielbild hochgeladen und dann verkleinert wieder heruntergeladen.
-![AWS Success](./AWS%20Bilder/AWS-Success.png)
+![AWS Success](../AWS%20Bilder/AWS-Success.png)
 
-![AWS Success Files](./AWS%20Bilder/AWS-Success-Files.png)
+![AWS Success Files](../AWS%20Bilder/AWS-Success-Files.png)

@@ -10,14 +10,14 @@ Das ist das Hauptrepository von Sullivan Renner und Lenny Gianfranceschi für da
 1. Als erstes muss man AWS auf seiner Konsole installieren. Dazu eine Anleitung [hier](https://docs.aws.amazon.com/de_de/cli/latest/userguide/getting-started-install.html)
 2. Dann muss man sich in der Konsole mit AWS verbinden. Dazu eine Anleitung [hier](./connectToAWS.md).<br>
 2. Dannach muss das Repository entweder mit git geklont oder als Zip herunterladen und entzippt werden.<br>
-3. Zum Schluss nur noch [create.sh](./Code/create.sh) in der Konsole aufrufen.<br>
+3. Zum Schluss nur noch [create.sh](../Code/create.sh) in der Konsole aufrufen.<br>
 Denn Rest erledigt das Skript.
 
  
 
 ## Namen anpassen
 
-Die Name aller AWS Komponenten können im [create.sh](./Code/create.sh) angepasst werden. Falls einer der 3 Namen nicht verfügbar ist (Buckets & Lamda Funktion), wird am Ende eine Zahl angefügt. Wenn dieser Name auch nicht verfügbar ist wird die Zahl um eins erhöht, bis alle Namen verfügbar sind.
+Die Name aller AWS Komponenten können im [create.sh](../Code/create.sh) angepasst werden. Falls einer der 3 Namen nicht verfügbar ist (Buckets & Lamda Funktion), wird am Ende eine Zahl angefügt. Wenn dieser Name auch nicht verfügbar ist wird die Zahl um eins erhöht, bis alle Namen verfügbar sind.
 
 
 ### <ins>bucket1original</ins>
@@ -42,7 +42,7 @@ Bucket1 = "copyImage-2"
  
 
 ## Grösse der verkleinerten Bilder ändern
-In der Datei [index.py](./Code/index.py) hat es eine Variable names size.<br>
+In der Datei [index.py](../Code/index.py) hat es eine Variable names size.<br>
 Mit dieser kann die Grösse der verkleinerten Bilder angepasst werden.
 <br>
 <br>
@@ -52,9 +52,12 @@ Das Seitenverhältniss des Orginalen Bildes bleibt bestehen.
  
 
 ## Testbild
-Im Ordner [Testbild](./Testbild/) befindet sich die Datei [Testbild.png](./Testbild/Testbild.png).<br>
+Im Ordner [Testbild](../Testbild/) befindet sich die Datei [Testbild.png](../Testbild/Testbild.png).<br>
 Diese wird am Ende jedes Erstellens als Test hoch und wieder heruntergeladen.
 Diese kann frei geändert und/oder umbenannt werden.
+
+## Reflexionen
+Die Reflexionen finden Sie [hier](./reflexionen.md).
 
  
 
