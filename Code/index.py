@@ -5,6 +5,7 @@ import pathlib
 from io import BytesIO
 
 s3 = boto3.client('s3')
+size = 300, 300
 
 
 def lambda_handler_replace(event, context):
@@ -13,7 +14,6 @@ def lambda_handler_replace(event, context):
     obj = client.get_object(Bucket='sourcebucket_replace', Key=event['Records'][0]['s3']['object']['key'])
     print("Got Object")
 
-    size = 300, 300
     in_mem_file = BytesIO()
     file_byte_string = obj['Body'].read()
     im = Image.open(BytesIO(file_byte_string))
