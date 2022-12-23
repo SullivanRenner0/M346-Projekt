@@ -59,7 +59,7 @@ Diese kann frei geändert und/oder umbenannt werden.
  
 
 ## Tests
-Alle Tests finde Sie [hier](./tests.md)
+Alle Tests finde Sie [hier](./tests.md).
 
 ## **Wichtig**
 Zu Beginn werden sie eventuell nach dem Passwort gefragt. Das liegt daran dass der Code die Packages zip und jq benötigt.

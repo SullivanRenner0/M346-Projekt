@@ -17,27 +17,27 @@ Falls es länger dauert, kann dass mehrere Gründe haben:
 Wenn man in die Konsole klickt, wird sie pausiert.<br>
 Durch das drücken der Enter-Taste läuft es wieder weiter.
 <br>
-<br>
+
 - <ins>Es braucht lange da es bereits viele Buckets mit diesen Name gibt</ins><br>
 Da das Skript so lange nach Namen sucht bis alle gültig sind, kann es sein, dass es sehr lange dauert bis gültige Namen gefunden werden.<br>
 In diesem Fall empfehle ich das Skript abzubrechen und die Namen der Buckets und der Funktion zu ändern.<br>
 Mehr dazu [hier](./readme.md) unter "Namen anpassen"
 <br>
-<br>
+
 -<ins>Session wurde beendet/Session-Token ist nicht mehr aktuell</ins><br>
 Wenn es 3min+ dauert köntte es daran liegen.<br>
 Mehr dazu [hier](./connectToAWS.md) unter "Session-Token hinzufügen"
 <br>
-<br>
+
 -<ins>Schlechte Internetverbindung</ins><br>
 Manchmal liegt es auch ganz Simpel an einer schlechten Internetverbindung.<br>
 In diesem Fall nach Möglichkeit mit einem besseren besseren Netzt verbinden und nochmals versuchen
 <br>
-<br>
+
 -<ins>Keines der oben genannten trifft zu</ins><br>
 In diesem Fall hat bei mir nur ein Neustart des Computer geholfen. Dannach breucht es wieder nur 50 Sekunden.
 
-<br>
+
 
 ## <ins>Erfolg</ins>
 Wenn das Skript erfolgreich druchläuft wird am Ende das Beispielbild hochgeladen und dann verkleinert wieder heruntergeladen.

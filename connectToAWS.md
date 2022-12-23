@@ -28,10 +28,10 @@
 
     ![open credentials](./AWS%20Bilder/AWS-Open-Credentials.png)
 
-    <ins>Vorher:</ins>
+    <ins>Vorher:</ins><br>
     ![](./AWS%20Bilder/AWS-Credentials-Before.png)
 
-    <ins>Nachher:</ins>
+    <ins>Nachher:</ins><br>
     ![](./AWS%20Bilder/AWS-Credentials-After.png)
 
     **Speichern!**
